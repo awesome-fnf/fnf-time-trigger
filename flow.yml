@@ -1,0 +1,7 @@
+version: v1beta1
+type: flow
+steps:
+  # task step to invoke FC function hello
+  - type: task
+    name: hello
+    resourceArn: acs:fc:::services/fnf-time-trigger/functions/hello
