@@ -1,18 +1,27 @@
 ROSTemplateFormatVersion: '2015-09-01'
 Transform: 'Aliyun::Serverless-2018-04-03'
+Parameters:
+  Cron:
+    Type: String
+    Description: cron expression
+    Default: '@every 1m'
+  Input:
+    Type: String
+    Description: target flow json input
+    Default: ''
 Resources:
-  # FC resources
-  fnf-time-trigger:
+  service:
+    DependsOn:
+      - flow
     Type: 'Aliyun::Serverless::Service'
     Properties:
       Description: fnf-time-trigger
       Policies:
         - AliyunFnFFullAccess
-
     timer:
       Type: 'Aliyun::Serverless::Function'
       Properties:
-        Description: 'function invoked by FC time trigger'
+        Description: function invoked by FC time trigger
         Handler: timer.handler
         Runtime: python3
         Timeout: 60
@@ -22,25 +31,36 @@ Resources:
         trigger:
           Type: Timer
           Properties:
-            Payload: '{"flow_name": "fnf-time-trigger-demo", "input": "{\"key\": \"hello world\"}"}'
-            CronExpression: "@every 1m"
+            Payload:
+              'Fn::Replace':
+                - <input>:
+                    Ref: Input
+                  <flow>:
+                    'Fn::GetAtt':
+                      - flow
+                      - Name
+                - '{"flow_name": "<flow>", "input": "<input>"}'
+            CronExpression:
+              'Fn::Replace':
+                - <cron>:
+                    Ref: Cron
+                - <cron>
             Enable: true
-
     hello:
       Type: 'Aliyun::Serverless::Function'
       Properties:
-        Description: 'function invoked by FnF flow'
+        Name: hello
+        Description: function invoked by FnF flow
         Handler: hello.handler
         Runtime: python3
         Timeout: 60
         MemorySize: 128
         CodeUri: src/hello.py
-
-  # FnF flow
-  fnf-time-trigger-demo:
+  flow:
     Type: 'Aliyun::Serverless::Flow'
     Properties:
-      Description: 'Fnf time trigger demo flow'
-      DefinitionUri: flow.yml
+      Name: time-trigger-demo
+      Description: Fnf time trigger demo flow
       Policies:
         - AliyunFCInvocationAccess
+      DefinitionUri: flow.yml
