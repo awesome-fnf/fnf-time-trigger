@@ -10,3 +10,5 @@
 
 ## 工作原理
 ![framework](https://img.alicdn.com/tfs/TB1D5J1vxn1gK0jSZKPXXXvUXXa-1336-440.png)
+
+[应用代码](https://github.com/awesome-fnf/fnf-time-trigger)
