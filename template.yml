@@ -11,8 +11,6 @@ Parameters:
     Default: ''
 Resources:
   service:
-    DependsOn:
-      - flow
     Type: 'Aliyun::Serverless::Service'
     Properties:
       Description: fnf-time-trigger
@@ -30,6 +28,8 @@ Resources:
         CodeUri: src/timer.py
       Events:
         trigger:
+          DependsOn:
+            - flow
           Type: Timer
           Properties:
             Payload:
@@ -58,10 +58,25 @@ Resources:
         MemorySize: 128
         CodeUri: src/hello.py
   flow:
+    DependsOn:
+      - service
     Type: 'Aliyun::Serverless::Flow'
     Properties:
       Name: time-trigger-demo
       Description: Fnf time trigger demo flow
       Policies:
         - AliyunFCInvocationAccess
-      DefinitionUri: flow.yml
+      Definition:
+        Fn::Replace:
+          - <ServiceName>:
+              Fn::GetAtt:
+                - service
+                - ServiceName
+          - |-
+            version: v1beta1
+            type: flow
+            steps:
+              # task step to invoke FC function hello
+              - type: task
+                name: hello
+                resourceArn: acs:fc:::services/<ServiceName>/functions/hello
