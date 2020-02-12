@@ -21,6 +21,7 @@ Resources:
     timer:
       Type: 'Aliyun::Serverless::Function'
       Properties:
+        FunctionName: timer
         Description: function invoked by FC time trigger
         Handler: timer.handler
         Runtime: python3
@@ -49,7 +50,7 @@ Resources:
     hello:
       Type: 'Aliyun::Serverless::Function'
       Properties:
-        Name: hello
+        FunctionName: hello
         Description: function invoked by FnF flow
         Handler: hello.handler
         Runtime: python3
