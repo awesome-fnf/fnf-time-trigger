@@ -1,0 +1,15 @@
+Version: '2020-03-03'
+OnCreateStackSucceededAction: FnFStartExecution
+FnFStartExecution:
+  EntrypointFlowKey: entrypointFlowName
+  Input: |
+    {}
+  FlowDefinitionPreview: |
+    ersion: v1beta1
+    type: flow
+    steps:
+      # task step to invoke FC function hello
+      - type: task
+        name: hello
+        resourceArn: acs:fc:::services/<ServiceName>/functions/hello
+

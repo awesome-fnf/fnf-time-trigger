@@ -80,3 +80,11 @@ Resources:
               - type: task
                 name: hello
                 resourceArn: acs:fc:::services/<ServiceName>/functions/hello
+Outputs:
+  entrypointFlowName:
+    Value:
+      'Fn::GetAtt':
+        - 'flow'
+        - 'Name'
+  applicationName:
+    Value: timer
