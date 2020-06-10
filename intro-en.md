@@ -9,7 +9,7 @@ Parameters：
 ![use](https://img.alicdn.com/tfs/TB1LD84vEY1gK0jSZFCXXcwqXXa-1365-641.gif)
 
 ## Framework
-![framework](https://img.alicdn.com/tfs/TB1UR_cvAT2gK0jSZFkXXcIQFXa-565-144.png)
+![framework](https://img.alicdn.com/tfs/TB1ly7rJUT1gK0jSZFrXXcNCXXa-718-183.png)
 
 ## Reference
 [Application Code](https://github.com/awesome-fnf/fnf-time-trigger)

@@ -10,43 +10,11 @@ Parameters:
     Description: target flow json input
     Default: ''
 Resources:
+  # Target service and function which will invoked in flow Task Step
   service:
     Type: 'Aliyun::Serverless::Service'
     Properties:
       Description: fnf-time-trigger
-      Policies:
-        - AliyunFnFFullAccess
-    timer:
-      Type: 'Aliyun::Serverless::Function'
-      Properties:
-        FunctionName: timer
-        Description: function invoked by FC time trigger
-        Handler: timer.handler
-        Runtime: python3
-        Timeout: 60
-        MemorySize: 128
-        CodeUri: src/timer.py
-      Events:
-        trigger:
-          DependsOn:
-            - flow
-          Type: Timer
-          Properties:
-            Payload:
-              'Fn::Replace':
-                - <input>:
-                    Ref: Input
-                  <flow>:
-                    'Fn::GetAtt':
-                      - flow
-                      - Name
-                - '{"flow_name": "<flow>", "input": "<input>"}'
-            CronExpression:
-              'Fn::Replace':
-                - <cron>:
-                    Ref: Cron
-                - <cron>
-            Enable: true
     hello:
       Type: 'Aliyun::Serverless::Function'
       Properties:
@@ -57,12 +25,18 @@ Resources:
         Timeout: 60
         MemorySize: 128
         CodeUri: src/hello.py
+
+  # flow
   flow:
     DependsOn:
       - service
     Type: 'Aliyun::Serverless::Flow'
     Properties:
-      Name: time-trigger-demo
+      Name:
+        Fn::Replace:
+          - <suffix>:
+              Ref: ALIYUN::StackName
+          - FnFTimer-<suffix>
       Description: Fnf time trigger demo flow
       Policies:
         - AliyunFCInvocationAccess
@@ -80,6 +54,26 @@ Resources:
               - type: task
                 name: hello
                 resourceArn: acs:fc:::services/<ServiceName>/functions/hello
+
+  # schedule to time invoke flow
+  schedule:
+    Type: 'ALIYUN::FNF::Schedule'
+    Properties:
+      Description: 'schedule to auto invoke flow'
+      FlowName:
+        Fn::Replace:
+          - <flowName>:
+              Fn::GetAtt:
+                - flow
+                - Name
+          - <flowName>
+      Enable: true
+      Payload:
+        Ref: Input
+      CronExpression:
+        Ref: Cron
+      ScheduleName: 'demo-schedule'
+
 Outputs:
   entrypointFlowName:
     Value:
